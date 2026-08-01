@@ -12,6 +12,8 @@ export type {
   ParseStrategy,
   AnimationOption,
   CloseReason,
+  CellRenderResult,
+  CellRenderer,
 } from './core/types';
 export { parseRightFill, parseLeftFill, parseSmart, parseAny } from './parser/parse';
 export { formatTime, tokenize } from './parser/format';

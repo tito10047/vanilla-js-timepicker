@@ -1,7 +1,7 @@
 import '../styles/timepicker.css';
 import { el, SVG_CLOCK } from './templates';
 import { PickerView } from './PickerView';
-import { GridView } from './HourGridView';
+import { GridView, type CellData } from './HourGridView';
 import { computePosition } from '../utils/position';
 import { createFocusTrap } from '../a11y/focusTrap';
 import { createLiveRegion } from '../a11y/aria';
@@ -169,7 +169,7 @@ export class Dropdown {
     this.currentView = 'picker';
   }
 
-  private switchView(view: TimeView): void {
+  private async switchView(view: TimeView): Promise<void> {
     this.currentView = view;
     // Remove old grid if present
     const existing = this.container.querySelector('.vtp-grid-wrap');
@@ -177,6 +177,7 @@ export class Dropdown {
 
     const locale = resolveLocale(this.opts.locale);
     const tokens = tokenize(this.opts.format ?? 'HH:mm');
+    const fmt = this.opts.format ?? 'HH:mm';
 
     const items = view === 'hours'
       ? Array.from({ length: 24 }, (_, i) => i)
@@ -192,23 +193,42 @@ export class Dropdown {
       : view === 'minutes' ? locale.minutesLabel
       : locale.secondsLabel;
 
+    // Hide picker chrome and show loading placeholder immediately
+    this.pickerHeader.style.display = 'none';
+    (this.pickerView.root as HTMLElement).style.display = 'none';
+    if (this.pickerFooter) this.pickerFooter.style.display = 'none';
+
+    const wrap = el('div', { class: 'vtp-grid-wrap' });
+    this.container.appendChild(wrap);
+
+    // Resolve cell data asynchronously if renderCell is provided
+    let cellData: CellData[] | undefined;
+    if (this.opts.renderCell) {
+      const renderer = this.opts.renderCell;
+      cellData = await Promise.all(
+        items.map((val) => {
+          const candidateParsed = view === 'hours'
+            ? { h: val, m: this.parsed.m, s: this.parsed.s }
+            : view === 'minutes'
+            ? { h: this.parsed.h, m: val, s: this.parsed.s }
+            : { h: this.parsed.h, m: this.parsed.m, s: val };
+          const timeStr = formatTime(candidateParsed, fmt);
+          return Promise.resolve(renderer(timeStr));
+        }),
+      );
+    }
+
     const grid = new GridView({
       locale,
       items,
       selected,
+      cellData,
       onSelect: (val) => this.onGridSelect(view, val),
       onBack: () => this.dismissGrid(),
       label,
     });
 
-    const wrap = el('div', { class: 'vtp-grid-wrap' });
     wrap.append(grid.root);
-
-    // Hide picker chrome, show grid
-    this.pickerHeader.style.display = 'none';
-    (this.pickerView.root as HTMLElement).style.display = 'none';
-    if (this.pickerFooter) this.pickerFooter.style.display = 'none';
-    this.container.appendChild(wrap);
     grid.focus();
   }
 

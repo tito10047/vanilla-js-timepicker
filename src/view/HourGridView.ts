@@ -1,11 +1,18 @@
 import { el } from './templates';
 import type { LocaleConfig } from '../core/types';
 
+export interface CellData {
+  className?: string | string[];
+  clickable?: boolean;
+  title?: string;
+}
+
 export interface GridViewOptions {
   locale: LocaleConfig;
   items: number[];
   selected: number;
   disabled?: number[];
+  cellData?: CellData[];
   onSelect: (value: number) => void;
   onBack: () => void;
   label: string;
@@ -38,8 +45,11 @@ export class GridView {
       'aria-label': this.opts.label,
     });
 
-    this.cells = this.opts.items.map((val) => {
-      const isDisabled = this.opts.disabled?.includes(val) ?? false;
+    this.cells = this.opts.items.map((val, idx) => {
+      const data = this.opts.cellData?.[idx];
+      const isDisabledByList = this.opts.disabled?.includes(val) ?? false;
+      const isDisabledByData = data?.clickable === false;
+      const isDisabled = isDisabledByList || isDisabledByData;
       const isSelected = val === this.opts.selected;
       const display = this.opts.pad !== false ? String(val).padStart(2, '0') : String(val);
 
@@ -49,9 +59,16 @@ export class GridView {
         role: 'gridcell',
         'aria-selected': String(isSelected),
         'aria-disabled': String(isDisabled),
-        'aria-label': display,
+        'aria-label': data?.title ?? display,
         tabindex: isSelected ? '0' : '-1',
       }, display);
+
+      if (data?.title) cell.title = data.title;
+
+      if (data?.className) {
+        const classes = Array.isArray(data.className) ? data.className : [data.className];
+        cell.classList.add(...classes);
+      }
 
       cell.addEventListener('click', () => {
         if (!isDisabled) this.opts.onSelect(val);

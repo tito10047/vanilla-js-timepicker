@@ -24,7 +24,7 @@ interface TimepickerState extends Record<string, unknown> {
 }
 
 const DEFAULTS: Required<Omit<TimepickerOptions,
-  'value' | 'defaultValue' | 'container' | 'disabledTimes' |
+  'value' | 'defaultValue' | 'container' | 'disabledTimes' | 'renderCell' |
   'onBeforeOpen' | 'onBeforeChange' | 'validate' |
   'onOpen' | 'onClose' | 'onChange' | 'onInput' | 'onInvalid' | 'onViewChange'
 >> = {

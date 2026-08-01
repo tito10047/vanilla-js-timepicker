@@ -40,6 +40,14 @@ export interface LocaleConfig {
 
 export type DisabledTimesFn = (time: string) => boolean | Promise<boolean>;
 
+export interface CellRenderResult {
+  className?: string | string[];
+  clickable?: boolean;
+  title?: string;
+}
+
+export type CellRenderer = (time: string) => CellRenderResult | Promise<CellRenderResult>;
+
 export interface TimepickerOptions {
   // Format
   format?: string;
@@ -51,6 +59,7 @@ export interface TimepickerOptions {
   minTime?: string;
   maxTime?: string;
   disabledTimes?: string[] | DisabledTimesFn;
+  renderCell?: CellRenderer;
 
   // Steps
   hourStep?: number;
