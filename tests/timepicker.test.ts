@@ -312,3 +312,117 @@ describe('getDate', () => {
     expect(d!.getMinutes()).toBe(30);
   });
 });
+
+// ─── renderCell in picker (spinner) view ─────────────────────────────────────
+
+/** Flush all pending microtasks so async applyRenderCell finishes. */
+const flush = () => new Promise<void>((r) => setTimeout(r, 0));
+
+describe('renderCell in picker (spinner) view', () => {
+  it('is called with the formatted time when the picker opens', async () => {
+    const renderCell = vi.fn().mockResolvedValue({});
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'HH:mm', renderCell });
+    await tp2.setValue('09:30');
+    await tp2.open();
+    await flush();
+    expect(renderCell).toHaveBeenCalledWith('09:30');
+    tp2.destroy();
+  });
+
+  it('applies className to all vtp-time-value buttons', async () => {
+    const renderCell = vi.fn().mockResolvedValue({ className: 'slot-busy' });
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'HH:mm', renderCell });
+    await tp2.setValue('14:00');
+    await tp2.open();
+    await flush();
+    const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.vtp-time-value'));
+    expect(buttons.length).toBeGreaterThan(0);
+    expect(buttons.every((b) => b.classList.contains('slot-busy'))).toBe(true);
+    tp2.destroy();
+  });
+
+  it('applies multiple classes passed as an array', async () => {
+    const renderCell = vi.fn().mockResolvedValue({ className: ['class-a', 'class-b'] });
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'HH:mm', renderCell });
+    await tp2.setValue('10:00');
+    await tp2.open();
+    await flush();
+    const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.vtp-time-value'));
+    expect(buttons.every((b) => b.classList.contains('class-a') && b.classList.contains('class-b'))).toBe(true);
+    tp2.destroy();
+  });
+
+  it('applies title to all vtp-time-value buttons', async () => {
+    const renderCell = vi.fn().mockResolvedValue({ title: 'This slot is occupied' });
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'HH:mm', renderCell });
+    await tp2.setValue('09:00');
+    await tp2.open();
+    await flush();
+    const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.vtp-time-value'));
+    expect(buttons.every((b) => b.title === 'This slot is occupied')).toBe(true);
+    tp2.destroy();
+  });
+
+  it('removes previous class when value changes while picker is open', async () => {
+    let call = 0;
+    const renderCell = vi.fn().mockImplementation(async () => {
+      call++;
+      return call === 1 ? { className: 'first-class' } : { className: 'second-class' };
+    });
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'HH:mm', renderCell });
+    await tp2.setValue('09:00');
+    await tp2.open();
+    await flush();
+
+    await tp2.setValue('10:00');
+    await flush();
+
+    const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.vtp-time-value'));
+    expect(buttons.every((b) => !b.classList.contains('first-class'))).toBe(true);
+    expect(buttons.every((b) => b.classList.contains('second-class'))).toBe(true);
+    tp2.destroy();
+  });
+
+  it('discards stale result when a newer update arrives before the first resolves', async () => {
+    let resolveFirst!: (v: { className: string }) => void;
+    const slowFirst = new Promise<{ className: string }>((r) => { resolveFirst = r; });
+    let call = 0;
+
+    const renderCell = vi.fn().mockImplementation(() => {
+      call++;
+      return call === 1 ? slowFirst : Promise.resolve({ className: 'second-class' });
+    });
+
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'HH:mm', renderCell });
+    await tp2.setValue('09:00');
+    await tp2.open();      // triggers call #1 (slow)
+    await tp2.setValue('10:00'); // triggers call #2 (fast)
+    await flush();         // call #2 resolves, 'second-class' applied
+
+    resolveFirst({ className: 'stale-class' }); // call #1 resolves late
+    await flush();         // stale result must be discarded
+
+    const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.vtp-time-value'));
+    expect(buttons.every((b) => b.classList.contains('second-class'))).toBe(true);
+    expect(buttons.every((b) => !b.classList.contains('stale-class'))).toBe(true);
+    tp2.destroy();
+  });
+
+  it('does not apply anything when renderCell returns empty result', async () => {
+    const renderCell = vi.fn().mockResolvedValue({});
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'HH:mm', renderCell });
+    await tp2.setValue('12:00');
+    await tp2.open();
+    await flush();
+    const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.vtp-time-value'));
+    expect(buttons.every((b) => b.classList.length === 1)).toBe(true); // only 'vtp-time-value'
+    tp2.destroy();
+  });
+});

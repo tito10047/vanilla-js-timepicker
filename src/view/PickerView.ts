@@ -1,6 +1,7 @@
 import { el, SVG_ARROW_UP, SVG_ARROW_DOWN } from './templates';
-import type { LocaleConfig } from '../core/types';
+import type { LocaleConfig, CellRenderer } from '../core/types';
 import { throttle } from '../utils/async';
+import { formatTime } from '../parser/format';
 
 export interface PickerViewOptions {
   locale: LocaleConfig;
@@ -16,6 +17,8 @@ export interface PickerViewOptions {
   onMinuteChange: (delta: number) => void;
   onSecondChange?: (delta: number) => void;
   onAmPmToggle?: (ampm: 'AM' | 'PM') => void;
+  renderCell?: CellRenderer;
+  format?: string;
 }
 
 export class PickerView {
@@ -25,6 +28,8 @@ export class PickerView {
   private secondVal?: HTMLButtonElement;
   private amBtn?: HTMLButtonElement;
   private pmBtn?: HTMLButtonElement;
+  private renderSeq = 0;
+  private prevCellClasses: string[] = [];
 
   constructor(private opts: PickerViewOptions) {
     this.root = this.build();
@@ -124,5 +129,40 @@ export class PickerView {
       this.amBtn.classList.toggle('vtp-active', ampm === 'AM');
       this.pmBtn.classList.toggle('vtp-active', ampm === 'PM');
     }
+    if (this.opts.renderCell && this.opts.format) {
+      this.applyRenderCell({ h, m, s }, this.opts.format);
+    }
+  }
+
+  private async applyRenderCell(parsed: { h: number; m: number; s: number }, format: string): Promise<void> {
+    const seq = ++this.renderSeq;
+    const timeStr = formatTime(parsed, format);
+    let result: Awaited<ReturnType<NonNullable<PickerViewOptions['renderCell']>>>;
+    try {
+      result = await Promise.resolve(this.opts.renderCell!(timeStr));
+    } catch {
+      return;
+    }
+    if (this.renderSeq !== seq) return;
+
+    const buttons = ([this.hourVal, this.minuteVal, this.secondVal] as Array<HTMLButtonElement | undefined>)
+      .filter((b): b is HTMLButtonElement => Boolean(b));
+
+    // Remove classes applied by the previous render
+    if (this.prevCellClasses.length) {
+      buttons.forEach((btn) => btn.classList.remove(...this.prevCellClasses));
+    }
+
+    const newClasses = result.className
+      ? (Array.isArray(result.className) ? result.className : [result.className]).filter(Boolean)
+      : [];
+
+    buttons.forEach((btn) => {
+      if (newClasses.length) btn.classList.add(...newClasses);
+      if (result.title !== undefined) btn.title = result.title;
+      else btn.removeAttribute('title');
+    });
+
+    this.prevCellClasses = newClasses;
   }
 }

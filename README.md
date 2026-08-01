@@ -1,5 +1,12 @@
 # vanilla-js-timepicker
 
+[![Test](https://github.com/tito10047/vanilla-js-timepicker/actions/workflows/test.yml/badge.svg)](https://github.com/tito10047/vanilla-js-timepicker/actions/workflows/test.yml)
+[![Deploy Docs & Demo](https://github.com/tito10047/vanilla-js-timepicker/actions/workflows/docs.yml/badge.svg)](https://github.com/tito10047/vanilla-js-timepicker/actions/workflows/docs.yml)
+[![npm version](https://img.shields.io/npm/v/vanilla-js-timepicker.svg)](https://www.npmjs.com/package/vanilla-js-timepicker)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+**[📖 Documentation](https://tito10047.github.io/vanilla-js-timepicker/) · [▶ Live Demo](https://tito10047.github.io/vanilla-js-timepicker/demo/)**
+
 Lightweight, dependency-free time picker for vanilla JavaScript and TypeScript.
 
 ![vanilla-js-timepicker demo](./docs/assets/timepicker-demo.gif)
@@ -107,7 +114,9 @@ new Timepicker('#slot', {
 })
 ```
 
-### Custom cell renderer — mark booked slots
+### Custom cell renderer — spinner view and grid view
+
+`renderCell` works in both the spinner (value buttons you click to open the grid) and in the grid cells themselves. Pass a sync or async function; it receives the full formatted time and returns `{ className, title, clickable }`.
 
 ```ts
 import type { CellRenderResult } from 'vanilla-js-timepicker'
@@ -127,6 +136,7 @@ new Timepicker('#appointment', {
 ```
 
 ```css
+/* Applied to value buttons in the spinner and to cells in the grid */
 .vtp-cell--booked {
   color: #bbb;
   text-decoration: line-through;
@@ -134,7 +144,8 @@ new Timepicker('#appointment', {
 }
 ```
 
-`renderCell` is called once per cell when a grid view opens. The `time` argument is the formatted time that cell would commit if clicked (e.g. `"14:30"` in the hours grid with current minute 30). All cells are resolved in parallel before the grid is rendered.
+- **Spinner view** — called once with the current time on every update (open + arrow scroll). Class and title are applied to all value buttons. Stale results from fast scrolling are automatically discarded.
+- **Grid view** — called once per cell in parallel via `Promise.all`. Grid renders after all results arrive.
 
 ### Dark theme
 
@@ -264,6 +275,8 @@ Full list of variables: [Theming guide](https://tito10047.github.io/vanilla-js-t
 ## Documentation
 
 Full documentation: [https://tito10047.github.io/vanilla-js-timepicker/](https://tito10047.github.io/vanilla-js-timepicker/)
+
+Live demo (8 interactive examples): [https://tito10047.github.io/vanilla-js-timepicker/demo/](https://tito10047.github.io/vanilla-js-timepicker/demo/)
 
 - [Getting Started](https://tito10047.github.io/vanilla-js-timepicker/guide/getting-started)
 - [Initialization & Options](https://tito10047.github.io/vanilla-js-timepicker/guide/initialization)

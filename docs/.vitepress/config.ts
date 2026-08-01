@@ -27,6 +27,7 @@ export default defineConfig({
       { text: 'Guide', link: '/guide/introduction' },
       { text: 'Cookbook', link: '/cookbook/' },
       { text: 'API', link: '/api/' },
+      { text: 'Demo', link: '/demo/' },
       {
         text: 'v0.1.0',
         items: [

@@ -1,6 +1,21 @@
 # Cell Renderer
 
-The `renderCell` option lets you control how individual cells in the hour, minute, and second grid views look and behave. It is called **once per cell** when the grid opens, with the formatted time that the cell would commit if clicked.
+The `renderCell` option lets you control how individual time elements look and behave in **both** the spinner (picker) view and the grid views.
+
+- **Spinner view** — the clickable time value buttons (e.g. the `"09"` and `"30"` you click to open the grid) receive the class and title for the **currently displayed time**.
+- **Grid view** — each selectable cell receives the class and title for the time **it would commit** if clicked.
+
+It is called asynchronously and can return a `Promise`, so you can fetch availability from a server before rendering.
+
+## How it works in each view
+
+### Spinner (picker) view
+When you open the picker and use the up/down arrows, `renderCell` is called once with the full formatted time each time `update()` is triggered. The result's `className` and `title` are applied to **all three value buttons** (`"09"`, `"30"`, `"45"`). This lets you signal that the currently selected time is occupied/invalid without switching to the grid.
+
+Race condition is handled automatically: if the user scrolls through times faster than `renderCell` resolves, only the result of the **last** call is applied. Stale results are silently discarded.
+
+### Grid view
+When the user clicks a value button to open the grid, `renderCell` is called once **per cell** (in parallel via `Promise.all`) with the time that cell would produce. The grid is rendered only after all calls resolve, so users see the final state immediately — no flickering.
 
 ## Signature
 
@@ -16,7 +31,33 @@ type CellRenderer = (time: string) => CellRenderResult | Promise<CellRenderResul
 
 The function receives a string in the active `format` (e.g. `"14:30"`, `"09:00 AM"`, `"14:30:00"`), where the non-candidate parts (hours when rendering the minutes grid, etc.) are taken from the current picker state.
 
-## Basic: mark booked slots as non-clickable
+## Spinner view: style the displayed time
+
+When the user scrolls arrows, the value buttons (`"09"`, `"30"`) update in real time. `renderCell` is called after each update with the full current time and its result is applied to all value buttons.
+
+```ts
+new Timepicker('#appointment', {
+  format: 'HH:mm',
+  renderCell: async (time) => {
+    const busy = await checkBusy(time)
+    return {
+      className: busy ? 'slot-busy' : undefined,
+      title: busy ? `${time} is occupied` : time,
+    }
+  },
+})
+```
+
+```css
+.slot-busy {
+  color: #bbb;
+  text-decoration: line-through;
+}
+```
+
+The value buttons immediately show `"09"` and `"30"` (sync), and then the class/title arrives asynchronously when the promise resolves. Stale results from rapid scrolling are automatically discarded.
+
+## Grid view: mark booked slots as non-clickable
 
 ```ts
 const bookedSlots = new Set(['09:00', '11:00', '14:30', '16:00'])

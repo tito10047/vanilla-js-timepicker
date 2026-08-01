@@ -205,7 +205,10 @@ The type of the `renderCell` option.
 type CellRenderer = (time: string) => CellRenderResult | Promise<CellRenderResult>
 ```
 
-The `time` argument is the formatted time the cell would commit if clicked. For the hours grid this is `"HH:mm"` with the candidate hour and the current minute; for the minutes grid it is the current hour with the candidate minute; and so on.
+The `time` argument carries the full formatted time in both contexts:
+
+- **Spinner (picker) view** — called once per `update()` (open + every arrow click) with the full current time. The result's `className` and `title` are applied to all value buttons (`"09"`, `"30"`, `"45"`). Stale results from rapid scrolling are automatically discarded via an internal sequence counter.
+- **Grid views** — called once per cell (all in parallel) with the time that cell would commit. For the hours grid this is `"HH:mm"` with the candidate hour and the current minute; for the minutes grid it is the current hour with the candidate minute; and so on.
 
 ```ts
 import type { CellRenderer } from 'vanilla-js-timepicker'

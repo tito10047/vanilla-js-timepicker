@@ -112,6 +112,8 @@ export class Dropdown {
       onMinuteChange: (delta) => this.changeUnit('minute', delta),
       onSecondChange: tokens.hasSeconds ? (delta) => this.changeUnit('second', delta) : undefined,
       onAmPmToggle: is12h ? (ap) => this.toggleAmPm(ap) : undefined,
+      renderCell: this.opts.renderCell,
+      format: this.opts.format ?? 'HH:mm',
     });
     container.append(this.pickerView.root);
 

@@ -33,7 +33,7 @@ Timepicker: element not found for "#departure"
 | `minTime` | `string` | `''` | Earliest allowed time in `HH:mm` (or `HH:mm:ss`). Values below this are rejected with `BELOW_MIN`. |
 | `maxTime` | `string` | `''` | Latest allowed time. Values above this are rejected with `ABOVE_MAX`. |
 | `disabledTimes` | `string[] \| (time: string) => boolean \| Promise<boolean>` | — | Array of exact times to block, or an async function returning `true` to block a time. |
-| `renderCell` | `(time: string) => CellRenderResult \| Promise<CellRenderResult>` | — | Custom async renderer for grid cells. Receives the formatted time the cell represents; return `{ clickable, className, title }`. See [Cell Renderer](../cookbook/render-cell.md). |
+| `renderCell` | `(time: string) => CellRenderResult \| Promise<CellRenderResult>` | — | Custom async renderer applied in both the spinner view (value buttons) and the grid views (individual cells). Receives the formatted time; return `{ clickable, className, title }`. See [Cell Renderer](../cookbook/render-cell.md). |
 
 ### Steps
 
