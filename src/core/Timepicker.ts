@@ -328,6 +328,7 @@ export class Timepicker {
   private async applyValue(formatted: string, parsed: ParsedTime | null): Promise<void> {
     const prev = this.state.get('rawValue');
     this.input.value = formatted;
+    this.input.classList.remove('vtp-invalid');
     this.state.patch({
       rawValue: formatted,
       hour: parsed?.h ?? 0,

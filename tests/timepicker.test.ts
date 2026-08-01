@@ -253,6 +253,51 @@ describe('minTime / maxTime', () => {
   });
 });
 
+// ─── vtp-invalid class lifecycle ──────────────────────────────────────────────
+
+describe('vtp-invalid class is removed when value becomes valid', () => {
+  it('adds vtp-invalid on out-of-range setValue', async () => {
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { minTime: '09:00', maxTime: '14:00' });
+    await tp2.setValue('08:00');
+    expect(inp.classList.contains('vtp-invalid')).toBe(true);
+    tp2.destroy();
+  });
+
+  it('removes vtp-invalid when setValue succeeds after a prior rejection', async () => {
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { minTime: '09:00', maxTime: '14:00' });
+    await tp2.setValue('08:00'); // rejected → class added
+    await tp2.setValue('10:00'); // accepted → class must be removed
+    expect(inp.classList.contains('vtp-invalid')).toBe(false);
+    tp2.destroy();
+  });
+
+  it('removes vtp-invalid when clear() is called after a prior rejection', async () => {
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { minTime: '09:00' });
+    await tp2.setValue('08:00');
+    expect(inp.classList.contains('vtp-invalid')).toBe(true);
+    await tp2.clear();
+    expect(inp.classList.contains('vtp-invalid')).toBe(false);
+    tp2.destroy();
+  });
+
+  it('removes vtp-invalid when validate passes after rejection', async () => {
+    const inp = makeInput();
+    let block = true;
+    const tp2 = new Timepicker(inp, {
+      validate: (v) => (block ? 'blocked' : true),
+    });
+    await tp2.setValue('10:00'); // rejected by validate
+    expect(inp.classList.contains('vtp-invalid')).toBe(true);
+    block = false;
+    await tp2.setValue('10:00'); // now passes
+    expect(inp.classList.contains('vtp-invalid')).toBe(false);
+    tp2.destroy();
+  });
+});
+
 // ─── destroy ─────────────────────────────────────────────────────────────────
 
 describe('destroy', () => {
