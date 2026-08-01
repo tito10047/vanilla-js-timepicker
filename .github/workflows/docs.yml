@@ -43,19 +43,20 @@ jobs:
       - name: Build library
         run: npm run build
 
-      - name: Build demo (examples/index.html)
-        run: npm run build:examples
-
       - name: Build docs (VitePress)
         run: npm run docs:build
 
-      - name: Merge demo into docs output
+      - name: Build demo page
+        # Rewrites dev-server imports (/src/...) → built library files,
+        # then places the result alongside the library files in docs output.
         run: |
           mkdir -p docs/.vitepress/dist/demo
-          cp dist-examples/examples/index.html docs/.vitepress/dist/demo/index.html
-          if [ -d dist-examples/assets ]; then
-            cp -r dist-examples/assets docs/.vitepress/dist/demo/assets
-          fi
+          cp dist/timepicker.esm.js docs/.vitepress/dist/demo/timepicker.esm.js
+          cp dist/timepicker.css   docs/.vitepress/dist/demo/timepicker.css
+          sed \
+            -e 's|href="/src/styles/timepicker.css"|href="./timepicker.css"|g' \
+            -e "s|import { Timepicker } from '/src/index.ts'|import { Timepicker } from './timepicker.esm.js'|g" \
+            examples/index.html > docs/.vitepress/dist/demo/index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

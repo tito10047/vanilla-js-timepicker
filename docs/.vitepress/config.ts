@@ -27,7 +27,7 @@ export default defineConfig({
       { text: 'Guide', link: '/guide/introduction' },
       { text: 'Cookbook', link: '/cookbook/' },
       { text: 'API', link: '/api/' },
-      { text: 'Demo', link: '/demo/' },
+      { text: 'Demo', link: 'https://tito10047.github.io/vanilla-js-timepicker/demo/', target: '_blank' },
       {
         text: 'v0.1.0',
         items: [

@@ -11,7 +11,7 @@ hero:
       link: /guide/getting-started
     - theme: alt
       text: Live Demo
-      link: /demo/
+      link: https://tito10047.github.io/vanilla-js-timepicker/demo/
     - theme: alt
       text: API Reference
       link: /api/
