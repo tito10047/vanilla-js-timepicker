@@ -253,6 +253,40 @@ describe('minTime / maxTime', () => {
   });
 });
 
+// ─── Mobile: numeric keyboard + visualViewport reposition ────────────────────
+
+describe('inputmode numeric for mobile keyboard', () => {
+  it('sets inputmode="numeric" on init so a numeric keyboard appears', () => {
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, {});
+    expect(inp.getAttribute('inputmode')).toBe('numeric');
+    tp2.destroy();
+  });
+
+  it('does not override an inputmode already set on the element', () => {
+    const inp = makeInput();
+    inp.setAttribute('inputmode', 'tel');
+    const tp2 = new Timepicker(inp, {});
+    expect(inp.getAttribute('inputmode')).toBe('tel');
+    tp2.destroy();
+  });
+
+  it('removes the added inputmode attribute on destroy', () => {
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, {});
+    tp2.destroy();
+    expect(inp.hasAttribute('inputmode')).toBe(false);
+  });
+
+  it('preserves a pre-existing inputmode attribute after destroy', () => {
+    const inp = makeInput();
+    inp.setAttribute('inputmode', 'tel');
+    const tp2 = new Timepicker(inp, {});
+    tp2.destroy();
+    expect(inp.getAttribute('inputmode')).toBe('tel');
+  });
+});
+
 // ─── vtp-invalid class lifecycle ──────────────────────────────────────────────
 
 describe('vtp-invalid class is removed when value becomes valid', () => {

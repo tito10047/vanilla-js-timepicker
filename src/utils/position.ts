@@ -16,8 +16,17 @@ export function computePosition(
   const dr = dropdown.getBoundingClientRect();
   const cr = container.getBoundingClientRect?.() ?? { top: 0, left: 0, bottom: window.innerHeight, right: window.innerWidth };
 
-  const spaceBelow = cr.bottom - ar.bottom;
-  const spaceAbove = ar.top - cr.top;
+  // Use visualViewport when available so the dropdown is positioned relative
+  // to the visible area even when the virtual keyboard has resized the viewport.
+  const vv = typeof window !== 'undefined' ? window.visualViewport : null;
+  const viewportHeight = vv ? vv.height : window.innerHeight;
+  const viewportWidth  = vv ? vv.width  : window.innerWidth;
+  // pageLeft/pageTop give the visual viewport origin in page (document) coordinates.
+  const scrollX = vv ? vv.pageLeft : window.scrollX;
+  const scrollY = vv ? vv.pageTop  : window.scrollY;
+
+  const spaceBelow = Math.min(cr.bottom, viewportHeight) - ar.bottom;
+  const spaceAbove = ar.top - Math.max(cr.top, 0);
 
   let placement: Placement =
     preferred === 'auto'
@@ -26,15 +35,12 @@ export function computePosition(
         : 'top'
       : (preferred as Placement);
 
-  const scrollX = window.scrollX;
-  const scrollY = window.scrollY;
-
   let top: number;
   let left = ar.left + scrollX;
 
   if (placement === 'bottom') {
     top = ar.bottom + scrollY + 4;
-    if (top + dr.height > scrollY + window.innerHeight) {
+    if (top + dr.height > scrollY + viewportHeight) {
       placement = 'top';
     }
   }
@@ -46,9 +52,9 @@ export function computePosition(
 
   top ??= ar.bottom + scrollY + 4;
 
-  // Prevent horizontal overflow
-  if (left + dr.width > scrollX + window.innerWidth) {
-    left = scrollX + window.innerWidth - dr.width - 8;
+  // Prevent horizontal overflow within the visual viewport
+  if (left + dr.width > scrollX + viewportWidth) {
+    left = scrollX + viewportWidth - dr.width - 8;
   }
   if (left < scrollX) left = scrollX + 8;
 

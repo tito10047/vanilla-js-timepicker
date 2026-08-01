@@ -26,6 +26,7 @@ export class Dropdown {
   private focusTrap: ReturnType<typeof createFocusTrap>;
   private liveRegion: ReturnType<typeof createLiveRegion>;
   private outsideClickCleanup?: () => void;
+  private vpCleanup?: () => void;
 
   constructor(
     private anchor: HTMLInputElement,
@@ -53,6 +54,7 @@ export class Dropdown {
     this.focusTrap.activate();
 
     this.outsideClickCleanup = this.attachOutsideClick();
+    this.vpCleanup = this.attachViewportResize();
   }
 
   hide(): void {
@@ -60,6 +62,8 @@ export class Dropdown {
     this.liveRegion.el.remove();
     this.focusTrap.deactivate();
     this.outsideClickCleanup?.();
+    this.vpCleanup?.();
+    this.vpCleanup = undefined;
   }
 
   update(parsed: ParsedTime): void {
@@ -343,6 +347,20 @@ export class Dropdown {
         case 'max': e.preventDefault(); this.parsed.h = 23; this.parsed.m = 59; this.pickerView.update(23, 59, 59); break;
       }
     });
+  }
+
+  // ─── Visual viewport (mobile keyboard) ───────────────────────────────────
+
+  private attachViewportResize(): () => void {
+    if (typeof window === 'undefined' || !window.visualViewport) return () => {};
+    const vv = window.visualViewport;
+    const reposition = () => this.position();
+    vv.addEventListener('resize', reposition);
+    vv.addEventListener('scroll', reposition);
+    return () => {
+      vv.removeEventListener('resize', reposition);
+      vv.removeEventListener('scroll', reposition);
+    };
   }
 
   // ─── Outside click ────────────────────────────────────────────────────────

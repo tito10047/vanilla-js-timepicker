@@ -61,6 +61,7 @@ export class Timepicker {
   private dropdown: Dropdown | null = null;
   private cleanupFns: (() => void)[] = [];
   private destroyed = false;
+  private addedInputMode = false;
   private static defaults: Partial<TimepickerOptions> = {};
 
   constructor(input: HTMLInputElement | string, options: TimepickerOptions = {}) {
@@ -93,6 +94,12 @@ export class Timepicker {
     this.input.setAttribute('role', 'combobox');
     this.input.setAttribute('aria-haspopup', 'dialog');
     this.input.setAttribute('aria-expanded', 'false');
+
+    // Show a numeric keyboard on mobile when the user hasn't specified their own inputmode.
+    if (!this.input.hasAttribute('inputmode')) {
+      this.input.setAttribute('inputmode', 'numeric');
+      this.addedInputMode = true;
+    }
 
     const initialValue = this.opts.value ?? this.opts.defaultValue;
     if (initialValue != null) {
@@ -273,6 +280,7 @@ export class Timepicker {
     this.input.removeAttribute('role');
     this.input.removeAttribute('aria-haspopup');
     this.input.removeAttribute('aria-expanded');
+    if (this.addedInputMode) this.input.removeAttribute('inputmode');
     dispatch(this.input, 'vtp:destroy', {});
   }
 
