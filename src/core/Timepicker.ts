@@ -309,9 +309,20 @@ export class Timepicker {
     const tokens = tokenize(this.opts.format!);
     const parseOpts = { hasSeconds: tokens.hasSeconds };
     const strategy = this.opts.parseStrategy ?? 'right-fill';
-    return strategy === 'left-fill' ? parseLeftFill(raw, parseOpts)
-      : strategy === 'smart'        ? parseSmart(raw, parseOpts)
-      :                               parseRightFill(raw, parseOpts);
+    const parsed = strategy === 'left-fill' ? parseLeftFill(raw, parseOpts)
+      : strategy === 'smart'                ? parseSmart(raw, parseOpts)
+      :                                       parseRightFill(raw, parseOpts);
+
+    if (!parsed || !tokens.is12h) return parsed;
+
+    // Apply AM/PM from the raw string when the format is 12-hour.
+    // The digit-only parse returns hours in the 1-12 range; we convert to 0-23 here.
+    const isPm = /pm/i.test(raw);
+    const isAm = /am/i.test(raw);
+    if (isPm && parsed.h < 12) parsed.h += 12;   // 3 PM → 15, 12 PM stays 12
+    else if (isAm && parsed.h === 12) parsed.h = 0; // 12 AM → 0 (midnight)
+
+    return parsed;
   }
 
   private async applyValue(formatted: string, parsed: ParsedTime | null): Promise<void> {

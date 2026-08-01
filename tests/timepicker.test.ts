@@ -426,3 +426,155 @@ describe('renderCell in picker (spinner) view', () => {
     tp2.destroy();
   });
 });
+
+// ─── helpers shared by the two bug-fix suites ────────────────────────────────
+
+function hourValueBtn(): HTMLButtonElement {
+  return document.querySelector<HTMLButtonElement>('.vtp-time-value')!;
+}
+function gridCells(): HTMLButtonElement[] {
+  return Array.from(document.querySelectorAll<HTMLButtonElement>('.vtp-cell'));
+}
+function cellWithText(text: string): HTMLButtonElement {
+  return gridCells().find((c) => c.textContent?.trim() === text)!;
+}
+
+// ─── Bug 1: 12h hours grid must show 1–12, not 0–23 ─────────────────────────
+
+describe('12h mode — hours grid shows 1–12 not 0–23', () => {
+  it('renders 12 cells valued 1–12 for hh:mm a format', async () => {
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'hh:mm a' });
+    await tp2.open();
+    hourValueBtn().click();
+    await flush();
+    const cells = gridCells();
+    expect(cells.length).toBe(12);
+    expect(cells.map((c) => Number(c.textContent?.trim()))).toEqual(
+      Array.from({ length: 12 }, (_, i) => i + 1),
+    );
+    tp2.destroy();
+  });
+
+  it('renders 24 cells valued 0–23 for HH:mm format', async () => {
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'HH:mm' });
+    await tp2.open();
+    hourValueBtn().click();
+    await flush();
+    expect(gridCells().length).toBe(24);
+    tp2.destroy();
+  });
+
+  it('selecting "03" while AM sets internal hour to 3', async () => {
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'hh:mm a' });
+    await tp2.setValue('03:00'); // 3 AM — parser strips non-digits → h=3
+    await tp2.open();
+    hourValueBtn().click();
+    await flush();
+    cellWithText('03').click();
+    await flush();
+    expect(tp2.getDate()!.getHours()).toBe(3);
+    tp2.destroy();
+  });
+
+  it('selecting "03" while PM sets internal hour to 15', async () => {
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'hh:mm a' });
+    await tp2.setValue('15:00'); // 3 PM in 24h → displayed as 03:00 PM
+    await tp2.open();
+    hourValueBtn().click();
+    await flush();
+    cellWithText('03').click();
+    await flush();
+    expect(tp2.getDate()!.getHours()).toBe(15);
+    tp2.destroy();
+  });
+
+  it('selecting "12" while AM sets internal hour to 0 (midnight)', async () => {
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'hh:mm a' });
+    await tp2.setValue('00:00'); // midnight
+    await tp2.open();
+    hourValueBtn().click();
+    await flush();
+    cellWithText('12').click();
+    await flush();
+    expect(tp2.getDate()!.getHours()).toBe(0);
+    tp2.destroy();
+  });
+
+  it('selecting "12" while PM sets internal hour to 12 (noon)', async () => {
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'hh:mm a' });
+    await tp2.setValue('12:00'); // noon
+    await tp2.open();
+    hourValueBtn().click();
+    await flush();
+    cellWithText('12').click();
+    await flush();
+    expect(tp2.getDate()!.getHours()).toBe(12);
+    tp2.destroy();
+  });
+});
+
+// ─── Bug 2: grid hour selection must update the input immediately ─────────────
+
+describe('grid hour selection updates the input immediately', () => {
+  it('getValue() returns new value after clicking hour cell', async () => {
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'HH:mm', minuteStep: 5 });
+    await tp2.setValue('09:30');
+    await tp2.open();
+    hourValueBtn().click();
+    await flush();
+    cellWithText('14').click();
+    await flush();
+    expect(tp2.getValue()).toBe('14:30');
+    tp2.destroy();
+  });
+
+  it('native input.value is updated after clicking hour cell', async () => {
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'HH:mm' });
+    await tp2.setValue('08:00');
+    await tp2.open();
+    hourValueBtn().click();
+    await flush();
+    cellWithText('11').click();
+    await flush();
+    expect(inp.value).toBe('11:00');
+    tp2.destroy();
+  });
+
+  it('onChange fires when hour is picked from the grid', async () => {
+    const onChange = vi.fn();
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'HH:mm', onChange });
+    await tp2.setValue('09:00');
+    await tp2.open();
+    hourValueBtn().click();
+    await flush();
+    cellWithText('10').click();
+    await flush();
+    expect(onChange).toHaveBeenCalledWith(
+      '10:00',
+      expect.objectContaining({ value: '10:00' }),
+    );
+    tp2.destroy();
+  });
+
+  it('dropdown stays open after hour selection so user can pick minutes', async () => {
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp, { format: 'HH:mm' });
+    await tp2.setValue('09:00');
+    await tp2.open();
+    hourValueBtn().click();
+    await flush();
+    cellWithText('14').click();
+    await flush();
+    expect(tp2.isOpen()).toBe(true);
+    tp2.destroy();
+  });
+});

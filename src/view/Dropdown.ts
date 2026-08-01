@@ -182,12 +182,15 @@ export class Dropdown {
     const fmt = this.opts.format ?? 'HH:mm';
 
     const items = view === 'hours'
-      ? Array.from({ length: 24 }, (_, i) => i)
+      ? (tokens.is12h
+          ? Array.from({ length: 12 }, (_, i) => i + 1)
+          : Array.from({ length: 24 }, (_, i) => i))
       : view === 'minutes'
       ? Array.from({ length: Math.ceil(60 / (this.opts.minuteStep ?? 5)) }, (_, i) => i * (this.opts.minuteStep ?? 5))
       : Array.from({ length: Math.ceil(60 / (this.opts.secondStep ?? 1)) }, (_, i) => i * (this.opts.secondStep ?? 1));
 
-    const selected = view === 'hours' ? this.parsed.h
+    const selected = view === 'hours'
+      ? (tokens.is12h ? (this.parsed.h % 12 || 12) : this.parsed.h)
       : view === 'minutes' ? this.parsed.m
       : this.parsed.s;
 
@@ -243,17 +246,30 @@ export class Dropdown {
   }
 
   private onGridSelect(view: TimeView, val: number): void {
-    if (view === 'hours') this.parsed.h = val;
-    else if (view === 'minutes') this.parsed.m = val;
-    else this.parsed.s = val;
+    if (view === 'hours') {
+      const tokens = tokenize(this.opts.format ?? 'HH:mm');
+      if (tokens.is12h) {
+        // val is in 1-12 display space; convert to 0-23 internal hour
+        this.parsed.h = val === 12
+          ? (this.ampm === 'AM' ? 0 : 12)
+          : (this.ampm === 'AM' ? val : val + 12);
+      } else {
+        this.parsed.h = val;
+      }
+    } else if (view === 'minutes') {
+      this.parsed.m = val;
+    } else {
+      this.parsed.s = val;
+    }
 
     this.dismissGrid();
     this.pickerView.update(this.parsed.h, this.parsed.m, this.parsed.s, this.parsed.h < 12 ? 'AM' : 'PM');
 
-    if (!this.opts.showConfirmButton && (this.opts.closeOnSelect ?? true) && view === 'hours') {
-      // After hour selection, allow minute pick
-    } else if (!this.opts.showConfirmButton) {
-      this.commit();
+    if (!this.opts.showConfirmButton) {
+      // Hours: always commit (update input) but keep dropdown open so user can pick minutes next.
+      // Minutes / seconds: commit and close according to closeOnSelect.
+      const shouldClose = view !== 'hours' && (this.opts.closeOnSelect ?? true);
+      this.commit(shouldClose);
     }
   }
 
