@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vanilla JS Timepicker – Demo</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f4f6fb;
+      padding: 40px 20px;
+      color: #1a1a2e;
+    }
+    h1 { font-size: 24px; margin-bottom: 4px; }
+    .subtitle { color: #888; margin-bottom: 32px; font-size: 14px; }
+    .demos { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+    .card h3 { margin: 0 0 6px; font-size: 15px; }
+    .card p { margin: 0 0 14px; font-size: 13px; color: #888; }
+    .card input {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #dde1ef;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .card input:focus { border-color: #4361ee; }
+    .log { margin-top: 10px; font-size: 12px; color: #888; min-height: 20px; }
+    .dark-bg { background: #16213e; }
+    .dark-bg h3, .dark-bg p { color: #ccc; }
+    .dark-bg input { background: #1e1e2e; border-color: #333354; color: #e0e0f0; }
+  </style>
+  <link rel="stylesheet" href="/src/styles/timepicker.css" />
+</head>
+<body>
+  <h1>Vanilla JS Timepicker</h1>
+  <p class="subtitle">Demos – 2026 masterpiece edition</p>
+
+  <div class="demos">
+
+    <!-- Basic 24h -->
+    <div class="card">
+      <h3>24h – základný</h3>
+      <p>Default nastavenia, locale SK</p>
+      <input id="tp1" type="text" placeholder="--:--" />
+      <div class="log" id="log1"></div>
+    </div>
+
+    <!-- 12h AM/PM -->
+    <div class="card">
+      <h3>12h AM/PM</h3>
+      <p>format: "hh:mm a", locale EN</p>
+      <input id="tp2" type="text" placeholder="--:-- AM" />
+      <div class="log" id="log2"></div>
+    </div>
+
+    <!-- With seconds -->
+    <div class="card">
+      <h3>So sekundami</h3>
+      <p>format: "HH:mm:ss"</p>
+      <input id="tp3" type="text" placeholder="--:--:--" />
+      <div class="log" id="log3"></div>
+    </div>
+
+    <!-- Min / Max -->
+    <div class="card">
+      <h3>Min/Max čas</h3>
+      <p>minTime: 08:00, maxTime: 17:00</p>
+      <input id="tp4" type="text" placeholder="08:00 – 17:00" />
+      <div class="log" id="log4"></div>
+    </div>
+
+    <!-- Async validate -->
+    <div class="card">
+      <h3>Async validácia</h3>
+      <p>Zakazuje 12:00 (obedňajší čas)</p>
+      <input id="tp5" type="text" placeholder="(nie 12:00)" />
+      <div class="log" id="log5"></div>
+    </div>
+
+    <!-- With buttons -->
+    <div class="card">
+      <h3>Now / Clear / Confirm</h3>
+      <p>showNowButton, showClearButton, showConfirmButton</p>
+      <input id="tp6" type="text" placeholder="--:--" />
+      <div class="log" id="log6"></div>
+    </div>
+
+    <!-- Dark theme -->
+    <div class="card dark-bg">
+      <h3>Dark theme</h3>
+      <p>theme: "dark"</p>
+      <input id="tp7" type="text" placeholder="--:--" />
+      <div class="log" id="log7"></div>
+    </div>
+
+    <!-- programmatic API -->
+    <div class="card">
+      <h3>Programmatic API</h3>
+      <p>setValue / getValue / setNow / clear</p>
+      <input id="tp8" type="text" placeholder="--:--" />
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+        <button onclick="tp8.setNow()" style="padding:5px 10px;border-radius:6px;border:1px solid #dde1ef;background:#f4f6fb;cursor:pointer;font-size:12px">Now</button>
+        <button onclick="tp8.setValue('09:15')" style="padding:5px 10px;border-radius:6px;border:1px solid #dde1ef;background:#f4f6fb;cursor:pointer;font-size:12px">Set 09:15</button>
+        <button onclick="tp8.clear()" style="padding:5px 10px;border-radius:6px;border:1px solid #dde1ef;background:#f4f6fb;cursor:pointer;font-size:12px">Clear</button>
+        <button onclick="alert(tp8.getValue())" style="padding:5px 10px;border-radius:6px;border:1px solid #dde1ef;background:#f4f6fb;cursor:pointer;font-size:12px">Get</button>
+      </div>
+      <div class="log" id="log8"></div>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { Timepicker } from '/src/index.ts';
+
+    function log(id, msg) {
+      document.getElementById(id).textContent = msg;
+    }
+
+    // 1 – Basic 24h SK
+    new Timepicker('#tp1', {
+      locale: 'sk',
+      theme: 'auto',
+      showNowButton: true,
+      onChange: (v) => log('log1', `onChange: ${v}`),
+      onInvalid: (e) => log('log1', `INVALID: ${e.message}`),
+    });
+
+    // 2 – 12h EN
+    new Timepicker('#tp2', {
+      format: 'hh:mm a',
+      locale: 'en',
+      closeOnSelect: false,
+      onChange: (v) => log('log2', `onChange: ${v}`),
+    });
+
+    // 3 – seconds
+    new Timepicker('#tp3', {
+      format: 'HH:mm:ss',
+      minuteStep: 5,
+      secondStep: 5,
+      onChange: (v) => log('log3', `onChange: ${v}`),
+    });
+
+    // 4 – min/max
+    new Timepicker('#tp4', {
+      minTime: '08:00',
+      maxTime: '17:00',
+      onChange: (v) => log('log4', `onChange: ${v}`),
+      onInvalid: (e) => log('log4', `INVALID: ${e.message}`),
+    });
+
+    // 5 – async validate
+    new Timepicker('#tp5', {
+      validate: async (v) => v === '12:00' ? 'Obedňajší čas nie je povolený' : true,
+      onInvalid: (e) => log('log5', `INVALID: ${e.message}`),
+      onChange: (v) => log('log5', `onChange: ${v}`),
+    });
+
+    // 6 – buttons
+    new Timepicker('#tp6', {
+      showNowButton: true,
+      showClearButton: true,
+      showConfirmButton: true,
+      onChange: (v) => log('log6', `onChange: ${v}`),
+    });
+
+    // 7 – dark
+    new Timepicker('#tp7', {
+      theme: 'dark',
+      onChange: (v) => log('log7', `onChange: ${v}`),
+    });
+
+    // 8 – programmatic
+    window.tp8 = new Timepicker('#tp8', {
+      onChange: (v) => log('log8', `onChange: ${v}`),
+    });
+  </script>
+</body>
+</html>
