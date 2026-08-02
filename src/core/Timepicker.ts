@@ -90,7 +90,17 @@ export class Timepicker {
 
   private init(): void {
     this.input.classList.add('vtp-input');
-    this.input.setAttribute('autocomplete', 'off');
+    // Suppress browser autocomplete/autofill on all browsers and devices.
+    // 'off' alone is ignored by Chrome/Safari; the combination below covers all known cases.
+    // 'new-password' is the most reliable value to suppress Chrome/Safari autofill;
+    // 'off' alone is ignored by those browsers.
+    this.input.setAttribute('autocomplete', 'new-password');
+    this.input.setAttribute('autocorrect', 'off');
+    this.input.setAttribute('autocapitalize', 'off');
+    this.input.setAttribute('spellcheck', 'false');
+    this.input.setAttribute('data-form-type', 'other');   // Dashlane / password managers
+    this.input.setAttribute('data-lpignore', 'true');     // LastPass
+    this.input.setAttribute('data-1p-ignore', '');        // 1Password
     this.input.setAttribute('role', 'combobox');
     this.input.setAttribute('aria-haspopup', 'dialog');
     this.input.setAttribute('aria-expanded', 'false');
@@ -277,6 +287,13 @@ export class Timepicker {
     this.cleanupFns = [];
     this.emitter.removeAllListeners();
     this.input.classList.remove('vtp-input');
+    this.input.removeAttribute('autocomplete');
+    this.input.removeAttribute('autocorrect');
+    this.input.removeAttribute('autocapitalize');
+    this.input.removeAttribute('spellcheck');
+    this.input.removeAttribute('data-form-type');
+    this.input.removeAttribute('data-lpignore');
+    this.input.removeAttribute('data-1p-ignore');
     this.input.removeAttribute('role');
     this.input.removeAttribute('aria-haspopup');
     this.input.removeAttribute('aria-expanded');
