@@ -94,7 +94,7 @@ new Timepicker('#tp', {
 You can format any `Date` object without creating a picker:
 
 ```ts
-import { Timepicker } from 'vanilla-js-timepicker'
+import { Timepicker } from '@tito10047/vanilla-js-timepicker'
 
 Timepicker.format(new Date(), 'HH:mm')     // "14:30"
 Timepicker.format(new Date(), 'hh:mm a')   // "02:30 PM"
@@ -106,7 +106,7 @@ Timepicker.format(new Date(), 'HH:mm:ss')  // "14:30:22"
 If you need lower-level access, both utilities are exported from the package:
 
 ```ts
-import { formatTime, tokenize } from 'vanilla-js-timepicker'
+import { formatTime, tokenize } from '@tito10047/vanilla-js-timepicker'
 
 const tokens = tokenize('hh:mm a')  // FormatTokens
 const str = formatTime({ h: 14, m: 30, s: 0 }, 'HH:mm')  // "14:30"

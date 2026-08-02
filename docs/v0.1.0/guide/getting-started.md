@@ -14,7 +14,7 @@ No runtime dependencies. Zero.
 ## 1. Install
 
 ```bash
-npm install vanilla-js-timepicker
+npm install @tito10047/vanilla-js-timepicker
 ```
 
 ## 2. Import
@@ -22,22 +22,22 @@ npm install vanilla-js-timepicker
 ### ES module (bundler — Vite, Rollup, Webpack, etc.)
 
 ```ts
-import { Timepicker } from 'vanilla-js-timepicker'
-import 'vanilla-js-timepicker/dist/timepicker.css'
+import { Timepicker } from '@tito10047/vanilla-js-timepicker'
+import '@tito10047/vanilla-js-timepicker/dist/timepicker.css'
 ```
 
 ### CommonJS (Node.js tooling)
 
 ```js
-const { Timepicker } = require('vanilla-js-timepicker')
+const { Timepicker } = require('@tito10047/vanilla-js-timepicker')
 ```
 
 ### CDN (no build step)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-js-timepicker/dist/timepicker.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tito10047/vanilla-js-timepicker/dist/timepicker.css" />
 <script type="module">
-  import { Timepicker } from 'https://cdn.jsdelivr.net/npm/vanilla-js-timepicker/dist/timepicker.esm.js'
+  import { Timepicker } from 'https://cdn.jsdelivr.net/npm/@tito10047/vanilla-js-timepicker/dist/timepicker.esm.js'
   new Timepicker('#time', { showNowButton: true })
 </script>
 ```
@@ -45,7 +45,7 @@ const { Timepicker } = require('vanilla-js-timepicker')
 Or via the UMD global build:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/vanilla-js-timepicker/dist/timepicker.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tito10047/vanilla-js-timepicker/dist/timepicker.umd.js"></script>
 <script>
   new Timepicker.Timepicker('#time', { showNowButton: true })
 </script>
@@ -62,8 +62,8 @@ Or via the UMD global build:
 ## 4. Attach the picker
 
 ```ts
-import { Timepicker } from 'vanilla-js-timepicker'
-import 'vanilla-js-timepicker/dist/timepicker.css'
+import { Timepicker } from '@tito10047/vanilla-js-timepicker'
+import '@tito10047/vanilla-js-timepicker/dist/timepicker.css'
 
 const tp = new Timepicker('#departure', {
   format: 'HH:mm',

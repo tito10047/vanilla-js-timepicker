@@ -1,6 +1,6 @@
 {
-  "name": "vanilla-js-timepicker",
-  "version": "0.1.1",
+  "name": "@tito10047/vanilla-js-timepicker",
+  "version": "0.1.2",
   "description": "Lightweight vanilla JavaScript timepicker with no dependencies",
   "author": "tito10047",
   "license": "MIT",

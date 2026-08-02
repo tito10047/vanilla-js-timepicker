@@ -5,13 +5,13 @@
 **Check 1 — CSS is imported.** The dropdown has no visible style without the stylesheet. Make sure you import it:
 
 ```ts
-import 'vanilla-js-timepicker/dist/timepicker.css'
+import '@tito10047/vanilla-js-timepicker/dist/timepicker.css'
 ```
 
 Or via `<link>` in HTML:
 
 ```html
-<link rel="stylesheet" href="/node_modules/vanilla-js-timepicker/dist/timepicker.css" />
+<link rel="stylesheet" href="/node_modules/@tito10047/vanilla-js-timepicker/dist/timepicker.css" />
 ```
 
 **Check 2 — `z-index` conflict.** Another element on your page may be rendering on top of the dropdown. The default `z-index` is `1000`. Raise it:

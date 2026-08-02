@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: "vanilla-js-timepicker"
+  name: "@tito10047/vanilla-js-timepicker"
   text: "A time picker with zero dependencies."
   tagline: "One constructor call, a fully accessible dropdown, keyboard navigation, async validation, and CSS-variable theming — all in under 10 kB."
   actions:
@@ -37,8 +37,8 @@ features:
 ## A complete example, start to finish
 
 ```ts
-import { Timepicker } from 'vanilla-js-timepicker'
-import 'vanilla-js-timepicker/dist/timepicker.css'
+import { Timepicker } from '@tito10047/vanilla-js-timepicker'
+import '@tito10047/vanilla-js-timepicker/dist/timepicker.css'
 
 const tp = new Timepicker('#departure', {
   format: 'HH:mm',

@@ -101,7 +101,7 @@ These three callbacks can return a `Promise`. The picker waits for the promise t
 Set defaults once for all future instances on the page:
 
 ```ts
-import { Timepicker } from 'vanilla-js-timepicker'
+import { Timepicker } from '@tito10047/vanilla-js-timepicker'
 
 Timepicker.setDefaults({
   locale: 'de',

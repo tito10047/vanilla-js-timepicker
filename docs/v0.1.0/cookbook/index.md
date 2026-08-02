@@ -19,6 +19,6 @@ The cookbook contains ready-to-use patterns for common integration scenarios. Ea
 All recipes assume:
 
 ```ts
-import { Timepicker } from 'vanilla-js-timepicker'
-import 'vanilla-js-timepicker/dist/timepicker.css'
+import { Timepicker } from '@tito10047/vanilla-js-timepicker'
+import '@tito10047/vanilla-js-timepicker/dist/timepicker.css'
 ```

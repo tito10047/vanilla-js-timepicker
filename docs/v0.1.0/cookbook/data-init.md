@@ -29,8 +29,8 @@ This pattern is useful for server-rendered HTML, CMS templates, or any context w
 ### JavaScript
 
 ```ts
-import { Timepicker } from 'vanilla-js-timepicker'
-import 'vanilla-js-timepicker/dist/timepicker.css'
+import { Timepicker } from '@tito10047/vanilla-js-timepicker'
+import '@tito10047/vanilla-js-timepicker/dist/timepicker.css'
 
 document.addEventListener('DOMContentLoaded', () => {
   const pickers = Timepicker.autoInit()

@@ -1,6 +1,6 @@
 # API Reference
 
-Complete reference for all public exports of `vanilla-js-timepicker`.
+Complete reference for all public exports of `@tito10047/vanilla-js-timepicker`.
 
 ## Class
 
@@ -9,7 +9,7 @@ Complete reference for all public exports of `vanilla-js-timepicker`.
 The main class. Attach it to any `<input>` element.
 
 ```ts
-import { Timepicker } from 'vanilla-js-timepicker'
+import { Timepicker } from '@tito10047/vanilla-js-timepicker'
 
 const tp = new Timepicker(input, options)
 ```
@@ -56,9 +56,9 @@ Throws if the selector does not match any element.
 ## Standalone functions
 
 ```ts
-import { parseRightFill, parseLeftFill, parseSmart, parseAny } from 'vanilla-js-timepicker'
-import { formatTime, tokenize } from 'vanilla-js-timepicker'
-import { registerLocale } from 'vanilla-js-timepicker'
+import { parseRightFill, parseLeftFill, parseSmart, parseAny } from '@tito10047/vanilla-js-timepicker'
+import { formatTime, tokenize } from '@tito10047/vanilla-js-timepicker'
+import { registerLocale } from '@tito10047/vanilla-js-timepicker'
 ```
 
 ### `parseRightFill(input, opts): ParsedTime | null`
@@ -110,7 +110,7 @@ interface FormatTokens {
 Register a custom locale under a string key.
 
 ```ts
-import type { LocaleConfig } from 'vanilla-js-timepicker'
+import type { LocaleConfig } from '@tito10047/vanilla-js-timepicker'
 registerLocale('fr', { title: "Choisir l'heure", ... } as LocaleConfig)
 ```
 
@@ -135,7 +135,7 @@ import type {
   DisabledTimesFn,
   CellRenderResult,
   CellRenderer,
-} from 'vanilla-js-timepicker'
+} from '@tito10047/vanilla-js-timepicker'
 ```
 
 ### `TimepickerOptions`
@@ -211,7 +211,7 @@ The `time` argument carries the full formatted time in both contexts:
 - **Grid views** — called once per cell (all in parallel) with the time that cell would commit. For the hours grid this is `"HH:mm"` with the candidate hour and the current minute; for the minutes grid it is the current hour with the candidate minute; and so on.
 
 ```ts
-import type { CellRenderer } from 'vanilla-js-timepicker'
+import type { CellRenderer } from '@tito10047/vanilla-js-timepicker'
 
 const renderer: CellRenderer = async (time) => {
   const busy = await checkServer(time)

@@ -1,15 +1,15 @@
-# vanilla-js-timepicker
+# @tito10047/vanilla-js-timepicker
 
 [![Test](https://github.com/tito10047/vanilla-js-timepicker/actions/workflows/test.yml/badge.svg)](https://github.com/tito10047/vanilla-js-timepicker/actions/workflows/test.yml)
 [![Deploy Docs & Demo](https://github.com/tito10047/vanilla-js-timepicker/actions/workflows/docs.yml/badge.svg)](https://github.com/tito10047/vanilla-js-timepicker/actions/workflows/docs.yml)
-[![npm version](https://img.shields.io/npm/v/vanilla-js-timepicker.svg)](https://www.npmjs.com/package/vanilla-js-timepicker)
+[![npm version](https://img.shields.io/npm/v/@tito10047/vanilla-js-timepicker.svg)](https://www.npmjs.com/package/@tito10047/vanilla-js-timepicker)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **[📖 Documentation](https://tito10047.github.io/vanilla-js-timepicker/) · [▶ Live Demo](https://tito10047.github.io/vanilla-js-timepicker/demo/)**
 
 Lightweight, dependency-free time picker for vanilla JavaScript and TypeScript.
 
-![vanilla-js-timepicker demo](./docs/assets/timepicker-demo.gif)
+![@tito10047/vanilla-js-timepicker demo](./docs/assets/timepicker-demo.gif)
 
 ---
 
@@ -30,14 +30,14 @@ Lightweight, dependency-free time picker for vanilla JavaScript and TypeScript.
 ## Installation
 
 ```bash
-npm install vanilla-js-timepicker
+npm install @tito10047/vanilla-js-timepicker
 ```
 
 ## Quick start
 
 ```ts
-import { Timepicker } from 'vanilla-js-timepicker'
-import 'vanilla-js-timepicker/dist/timepicker.css'
+import { Timepicker } from '@tito10047/vanilla-js-timepicker'
+import '@tito10047/vanilla-js-timepicker/dist/timepicker.css'
 
 const tp = new Timepicker('#departure', {
   format: 'HH:mm',
@@ -58,9 +58,9 @@ const tp = new Timepicker('#departure', {
 ## CDN (no build step)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-js-timepicker/dist/timepicker.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tito10047/vanilla-js-timepicker/dist/timepicker.css" />
 <script type="module">
-  import { Timepicker } from 'https://cdn.jsdelivr.net/npm/vanilla-js-timepicker/dist/timepicker.esm.js'
+  import { Timepicker } from 'https://cdn.jsdelivr.net/npm/@tito10047/vanilla-js-timepicker/dist/timepicker.esm.js'
   new Timepicker('#time', { showNowButton: true })
 </script>
 ```
@@ -119,7 +119,7 @@ new Timepicker('#slot', {
 `renderCell` works in both the spinner (value buttons you click to open the grid) and in the grid cells themselves. Pass a sync or async function; it receives the full formatted time and returns `{ className, title, clickable }`.
 
 ```ts
-import type { CellRenderResult } from 'vanilla-js-timepicker'
+import type { CellRenderResult } from '@tito10047/vanilla-js-timepicker'
 
 new Timepicker('#appointment', {
   format: 'HH:mm',

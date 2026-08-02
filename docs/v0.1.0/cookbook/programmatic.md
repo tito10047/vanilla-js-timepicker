@@ -19,8 +19,8 @@ This recipe shows how to drive the picker entirely from your own buttons and app
 ```
 
 ```ts
-import { Timepicker } from 'vanilla-js-timepicker'
-import 'vanilla-js-timepicker/dist/timepicker.css'
+import { Timepicker } from '@tito10047/vanilla-js-timepicker'
+import '@tito10047/vanilla-js-timepicker/dist/timepicker.css'
 
 const tp = new Timepicker('#tp', {
   onChange: (v) => console.log('onChange:', v),

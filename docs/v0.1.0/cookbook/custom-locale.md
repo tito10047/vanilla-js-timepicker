@@ -6,7 +6,7 @@ This recipe shows how to add a locale that is not shipped with the library and m
 
 ```ts
 // src/locales/fr.ts
-import type { LocaleConfig } from 'vanilla-js-timepicker'
+import type { LocaleConfig } from '@tito10047/vanilla-js-timepicker'
 
 export const fr: LocaleConfig = {
   title: "Choisir l'heure",
@@ -25,7 +25,7 @@ export const fr: LocaleConfig = {
 
 ```ts
 // src/main.ts
-import { registerLocale, Timepicker } from 'vanilla-js-timepicker'
+import { registerLocale, Timepicker } from '@tito10047/vanilla-js-timepicker'
 import { fr } from './locales/fr'
 
 registerLocale('fr', fr)
@@ -67,7 +67,7 @@ new Timepicker('#tp3', { locale: fr })             // direct object (no registra
 
 ```ts
 import ptLocale from './locales/pt.json'
-import type { LocaleConfig } from 'vanilla-js-timepicker'
+import type { LocaleConfig } from '@tito10047/vanilla-js-timepicker'
 
 registerLocale('pt', ptLocale as LocaleConfig)
 ```
@@ -93,7 +93,7 @@ async function switchLanguage(lang: string) {
 If you only want to change one label (e.g. the Confirm button text), spread the built-in locale:
 
 ```ts
-import { registerLocale } from 'vanilla-js-timepicker'
+import { registerLocale } from '@tito10047/vanilla-js-timepicker'
 
 // Import the built-in en locale strings manually
 const enCustom = {

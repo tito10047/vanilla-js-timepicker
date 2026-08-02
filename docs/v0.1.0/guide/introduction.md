@@ -1,6 +1,6 @@
 # Introduction
 
-`vanilla-js-timepicker` is a lightweight, dependency-free time picker component for the web. It attaches to any `<input>` element and provides a dropdown UI for selecting hours, minutes, and (optionally) seconds.
+`@tito10047/vanilla-js-timepicker` is a lightweight, dependency-free time picker component for the web. It attaches to any `<input>` element and provides a dropdown UI for selecting hours, minutes, and (optionally) seconds.
 
 ## The problem
 
@@ -16,8 +16,8 @@ Common workarounds — splitting into separate hour/minute fields, using a full-
 ## The solution
 
 ```ts
-import { Timepicker } from 'vanilla-js-timepicker'
-import 'vanilla-js-timepicker/dist/timepicker.css'
+import { Timepicker } from '@tito10047/vanilla-js-timepicker'
+import '@tito10047/vanilla-js-timepicker/dist/timepicker.css'
 
 new Timepicker('#departure', {
   format: 'HH:mm',

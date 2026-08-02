@@ -154,7 +154,7 @@ new Timepicker('#tp', {
 Import the types to annotate your renderer:
 
 ```ts
-import type { CellRenderer, CellRenderResult } from 'vanilla-js-timepicker'
+import type { CellRenderer, CellRenderResult } from '@tito10047/vanilla-js-timepicker'
 
 const renderer: CellRenderer = async (time): Promise<CellRenderResult> => {
   const busy = await checkBusy(time)

@@ -79,7 +79,7 @@ new Timepicker('#tp', { autofill: false })
 All three parse functions are exported:
 
 ```ts
-import { parseRightFill, parseLeftFill, parseSmart, parseAny } from 'vanilla-js-timepicker'
+import { parseRightFill, parseLeftFill, parseSmart, parseAny } from '@tito10047/vanilla-js-timepicker'
 
 parseRightFill('930',  { hasSeconds: false })  // { h: 9, m: 30, s: 0 }
 parseLeftFill('930',   { hasSeconds: false })  // { h: 9, m: 30, s: 0 }

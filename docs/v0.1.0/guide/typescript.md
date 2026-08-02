@@ -1,6 +1,6 @@
 # TypeScript
 
-`vanilla-js-timepicker` is written in TypeScript and ships with declaration files. You get full type coverage with no additional `@types` package needed.
+`@tito10047/vanilla-js-timepicker` is written in TypeScript and ships with declaration files. You get full type coverage with no additional `@types` package needed.
 
 ## Type declarations file
 
@@ -28,7 +28,7 @@ import type {
   ParseStrategy,
   AnimationOption,
   CloseReason,
-} from 'vanilla-js-timepicker'
+} from '@tito10047/vanilla-js-timepicker'
 ```
 
 ## Key type definitions
@@ -199,7 +199,7 @@ Or extend the global `HTMLElementEventMap` in your project's declarations:
 
 ```ts
 // src/timepicker.d.ts
-import type { TimepickerChangeEvent, TimepickerError } from 'vanilla-js-timepicker'
+import type { TimepickerChangeEvent, TimepickerError } from '@tito10047/vanilla-js-timepicker'
 
 declare global {
   interface HTMLElementEventMap {
