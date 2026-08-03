@@ -46,6 +46,7 @@ Throws if the selector does not match any element.
 
 | Method | Returns | Description |
 |---|---|---|
+| `Timepicker.getInstance(el)` | `Timepicker \| null` | Return the instance attached to an element or selector, or `null`. |
 | `Timepicker.setDefaults(partial)` | `void` | Set global option defaults for all future instances. |
 | `Timepicker.autoInit(selector?)` | `Timepicker[]` | Init all matching elements. Default selector: `[data-timepicker]`. |
 | `Timepicker.parse(text, opts?)` | `string \| null` | Parse a raw string to a formatted time string. |

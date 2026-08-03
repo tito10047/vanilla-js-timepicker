@@ -657,3 +657,40 @@ describe('grid hour selection updates the input immediately', () => {
     tp2.destroy();
   });
 });
+
+// ─── getInstance ──────────────────────────────────────────────────────────────
+
+describe('getInstance', () => {
+  it('returns the instance for a registered HTMLInputElement', () => {
+    expect(Timepicker.getInstance(input)).toBe(tp);
+  });
+
+  it('returns the instance via CSS selector string', () => {
+    input.id = 'tp-gi-test';
+    expect(Timepicker.getInstance('#tp-gi-test')).toBe(tp);
+  });
+
+  it('returns null for an element with no timepicker attached', () => {
+    const bare = makeInput();
+    expect(Timepicker.getInstance(bare)).toBeNull();
+  });
+
+  it('returns null for an unknown CSS selector', () => {
+    expect(Timepicker.getInstance('#does-not-exist')).toBeNull();
+  });
+
+  it('returns null after destroy()', () => {
+    const inp = makeInput();
+    const tp2 = new Timepicker(inp);
+    tp2.destroy();
+    expect(Timepicker.getInstance(inp)).toBeNull();
+  });
+
+  it('correctly tracks multiple independent instances', () => {
+    const inp2 = makeInput();
+    const tp2 = new Timepicker(inp2);
+    expect(Timepicker.getInstance(input)).toBe(tp);
+    expect(Timepicker.getInstance(inp2)).toBe(tp2);
+    tp2.destroy();
+  });
+});

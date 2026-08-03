@@ -174,6 +174,28 @@ Always call `destroy()` before removing the input from the DOM to prevent memory
 
 ## Static methods
 
+### `Timepicker.getInstance(el): Timepicker | null`
+
+Returns the `Timepicker` instance attached to a given element, or `null` if none exists. Accepts either an `HTMLInputElement` or a CSS selector string.
+
+```ts
+// retrieve by CSS selector
+const tp = Timepicker.getInstance('#departure')
+tp?.setValue('14:30')
+
+// retrieve by element reference
+const input = document.getElementById('departure') as HTMLInputElement
+const value = Timepicker.getInstance(input)?.getValue()
+```
+
+Returns `null` when:
+- no picker has been created for the element
+- the picker has already been destroyed
+
+::: tip
+This is useful in event handlers, third-party integrations, or any context where you don't hold the original `Timepicker` reference.
+:::
+
 ### `Timepicker.setDefaults(partial): void`
 
 Sets global default options for all future instances. See [Initialization](./initialization.md#global-defaults).

@@ -63,6 +63,7 @@ export class Timepicker {
   private destroyed = false;
   private addedInputMode = false;
   private static defaults: Partial<TimepickerOptions> = {};
+  private static registry = new WeakMap<HTMLInputElement, Timepicker>();
 
   constructor(input: HTMLInputElement | string, options: TimepickerOptions = {}) {
     const el =
@@ -73,6 +74,7 @@ export class Timepicker {
 
     this.input = el;
     this.opts = { ...DEFAULTS, ...Timepicker.defaults, ...options };
+    Timepicker.registry.set(el, this);
 
     this.state = new State<TimepickerState>({
       hour: 0,
@@ -298,6 +300,7 @@ export class Timepicker {
     this.input.removeAttribute('aria-haspopup');
     this.input.removeAttribute('aria-expanded');
     if (this.addedInputMode) this.input.removeAttribute('inputmode');
+    Timepicker.registry.delete(this.input);
     dispatch(this.input, 'vtp:destroy', {});
   }
 
@@ -322,6 +325,13 @@ export class Timepicker {
       :                          parseRightFill(text, parseOpts);
     if (!parsed) return null;
     return formatTime(parsed, hasSeconds ? 'HH:mm:ss' : 'HH:mm');
+  }
+
+  static getInstance(el: HTMLInputElement | string): Timepicker | null {
+    const input = typeof el === 'string'
+      ? document.querySelector<HTMLInputElement>(el)
+      : el;
+    return input ? Timepicker.registry.get(input) ?? null : null;
   }
 
   static format(date: Date, format = 'HH:mm'): string {
